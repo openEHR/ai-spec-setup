@@ -27,7 +27,7 @@ Needs: Claude Code, git, Docker, GNU make. Both MCP servers ask you to log in; f
 
 ```sh
 mkdir openehr-spec && cd openehr-spec
-git clone --recurse-submodules <this-repo> openehr-ai-skills
+git clone --recurse-submodules https://github.com/openEHR/openehr-ai-skills.git openehr-ai-skills
 # already cloned without submodules?  git -C openehr-ai-skills submodule update --init --recursive
 ```
 
