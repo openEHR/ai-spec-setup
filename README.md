@@ -1,7 +1,7 @@
-# openEHR AI skills
+# openEHR AI spec setup
 
-One folder, `openehr-spec/`, with everything needed to work on openEHR specifications and clinical
-models with Claude Code: all 18 `specifications-XX` repos side by side, the two skill plugins, and
+Claude Code setup for openEHR specification work, with clinical-modelling skills included. One folder,
+`openehr-spec/`, holds all 18 `specifications-XX` repos side by side, the two skill plugins, and
 the MCP servers they use. Claude Code is always started in that folder, so every skill finds every
 sibling repo.
 
@@ -27,14 +27,14 @@ Needs: Claude Code, git, Docker, GNU make. Both MCP servers ask you to log in; f
 
 ```sh
 mkdir openehr-spec && cd openehr-spec
-git clone --recurse-submodules https://github.com/openEHR/openehr-ai-skills.git openehr-ai-skills
-# already cloned without submodules?  git -C openehr-ai-skills submodule update --init --recursive
+git clone --recurse-submodules https://github.com/openEHR/ai-spec-setup.git ai-spec-setup
+# already cloned without submodules?  git -C ai-spec-setup submodule update --init --recursive
 ```
 
 ### 1. Discourse MCP
 
 ```sh
-cd openehr-ai-skills/external/discourse-mcp
+cd ai-spec-setup/external/discourse-mcp
 make build
 docker run -it --rm -v "$HOME/.config:/out" node:24-alpine \
   npx -y @discourse/mcp@latest generate-user-api-key \
@@ -76,14 +76,14 @@ In Claude Code, then restart it:
 ### 4. Spec repos
 
 ```sh
-openehr-ai-skills/scripts/clone-spec-repos.sh     # 18 specifications-XX repos into openehr-spec/
+ai-spec-setup/scripts/clone-spec-repos.sh     # 18 specifications-XX repos into openehr-spec/
 ```
 
 ### 5. Run the AI in `openehr-spec/`
 
 ```sh
-cp openehr-ai-skills/.mcp.json .
-mkdir -p .claude && cp openehr-ai-skills/.claude/settings.json .claude/
+cp ai-spec-setup/.mcp.json .
+mkdir -p .claude && cp ai-spec-setup/.claude/settings.json .claude/
 claude
 ```
 
@@ -115,7 +115,7 @@ Step by step: [docs/example-is-blue.md](docs/example-is-blue.md).
 ```
 openehr-spec/
 ├── .mcp.json, .claude/settings.json      copied from this repo
-├── openehr-ai-skills/           this repo: docs/, scripts/, external/ (submodules)
+├── ai-spec-setup/           this repo: docs/, scripts/, external/ (submodules)
 ├── specifications-AA_GLOBAL/
 ├── specifications-RM/
 └── ... (18 specifications-XX repos)
