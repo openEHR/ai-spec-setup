@@ -1,0 +1,9 @@
+[submodule "external/openEHR-ai-plugins"]
+	path = external/openEHR-ai-plugins
+	url = https://github.com/openEHR/ai-plugins.git
+[submodule "external/cadasto-openehr-assistant-plugin"]
+	path = external/cadasto-openehr-assistant-plugin
+	url = https://github.com/Cadasto/openehr-assistant-plugin.git
+[submodule "external/discourse-mcp"]
+	path = external/discourse-mcp
+	url = https://github.com/openEHR/discourse-mcp.git

@@ -1,0 +1,9 @@
+# Spec repo workspace cloned by scripts/clone-spec-repos.* (lives outside this repo by default)
+/workspace/
+# bmm-publisher output
+/out/
+# Never commit MCP auth profiles
+*.profile.json
+.env
+# local scratch notes
+todoo.txt
