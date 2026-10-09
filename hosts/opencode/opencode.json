@@ -1,0 +1,33 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "discourse-openehr-org": {
+      "type": "local",
+      "command": [
+        "docker",
+        "run",
+        "-i",
+        "--rm",
+        "--init",
+        "--pull=never",
+        "--security-opt",
+        "no-new-privileges",
+        "-v",
+        "${HOME}/.config/discourse-openehr-org.profile.json:/profile.json:ro",
+        "discourse-mcp",
+        "--profile",
+        "/profile.json",
+        "--site",
+        "https://discourse.openehr.org",
+        "--tools_mode",
+        "discourse_api_only"
+      ],
+      "enabled": true
+    },
+    "atlassian": {
+      "type": "remote",
+      "url": "https://mcp.atlassian.com/v2/mcp",
+      "enabled": true
+    }
+  }
+}

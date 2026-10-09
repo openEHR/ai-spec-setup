@@ -1,6 +1,7 @@
 # openEHR AI spec setup
 
-Claude Code setup for openEHR specification work, with clinical-modelling skills included. One folder,
+AI-assistant setup for openEHR specification work, with clinical-modelling skills included. Claude Code
+is the reference host; Cursor, Codex, Gemini CLI, OpenCode and Mistral Vibe are covered too. One folder,
 `openehr-spec/`, holds all 18 `specifications-XX` repos side by side, the two skill plugins, and
 the MCP servers they use. Claude Code is always started in that folder, so every skill finds every
 sibling repo.
@@ -21,7 +22,7 @@ Worked example: [docs/example-is-blue.md](docs/example-is-blue.md).
 
 ## Setup
 
-Needs: Claude Code, git, Docker, GNU make. Both MCP servers ask you to log in; follow the prompt.
+Needs: an AI host (Claude Code shown; others in [Hosts and models](#hosts-and-models)), git, Docker, GNU make, python3. Both MCP servers ask you to log in; follow the prompt.
 
 ### 0. One folder, clone recursively
 
@@ -81,13 +82,16 @@ ai-spec-setup/scripts/clone-spec-repos.sh     # 18 specifications-XX repos into 
 
 ### 5. Run the AI in `openehr-spec/`
 
+Pick your host; the script copies its MCP config, `AGENTS.md`, and (for non-Claude hosts) the skills
+into `.agents/skills/`:
+
 ```sh
-cp ai-spec-setup/.mcp.json .
-mkdir -p .claude && cp ai-spec-setup/.claude/settings.json .claude/
-claude
+ai-spec-setup/scripts/install-host.sh claude      # or: cursor | codex | gemini | vibe | opencode
+claude                                            # or: cursor . | codex | gemini | vibe | opencode
 ```
 
-Always start `claude` here: the skills expect all `specifications-XX` folders as siblings.
+Always start the assistant here: the skills expect all `specifications-XX` folders as siblings.
+Host differences: [Hosts and models](#hosts-and-models).
 
 ### 6. Smoke test
 
@@ -110,12 +114,43 @@ git -C specifications-RM switch - && git -C specifications-RM branch -D try/is-b
 
 Step by step: [docs/example-is-blue.md](docs/example-is-blue.md).
 
+## Hosts and models
+
+Skills are `SKILL.md` ([Agent Skills](https://agentskills.io), an open format) and the servers are
+MCP, so the setup is not tied to Claude. What differs per host is the config file and how much of
+the plugins carries over. `.mcp.json` is the single source; `scripts/gen-host-configs.py` writes
+the per-host files into `hosts/`, and `scripts/install-host.sh <host>` copies them to the root.
+
+| Tier | Hosts | You get | Config written to root |
+|------|-------|---------|------------------------|
+| Full | Claude Code, Cursor | all skills via the plugin marketplaces, subagents (`spec-reviewer`, `xref-auditor`, `identifier-grounding`, `clinical-modeler`, `ckm-scout`), Docker action skills `/openehr-specs:publish`, `regen-classes`, `scaffold`, hooks | `.mcp.json` + `.claude/settings.json`; `.cursor/mcp.json` |
+| Skills + MCP | Codex CLI, Gemini CLI, GitHub Copilot, OpenCode, Mistral Vibe | the 15 skills from `.agents/skills/`, all MCP tools, `AGENTS.md`. No subagents; run the Docker steps by hand (commands in [docs/example-is-blue.md](docs/example-is-blue.md)) | `.codex/config.toml`; `.gemini/settings.json`; `opencode.json`; `.vibe/config.toml`; Copilot reads `.agents/skills/` + VS Code MCP settings |
+| Open models | any host above, pointed at a local or open model | same as the host's tier; quality depends on the model | see below |
+
+Login prompts are the same everywhere: Discourse via the API-key step, Atlassian via OAuth on first use.
+
+**Open models with Claude Code.** Ollama 0.14+ speaks the Anthropic Messages API, so this exact setup
+runs on a local model with two env vars (LM Studio 0.4.1+ and llama.cpp work the same way):
+
+```sh
+ollama pull qwen3-coder                      # or devstral, gpt-oss:20b, glm-4.7-flash
+export ANTHROPIC_BASE_URL=http://localhost:11434 ANTHROPIC_AUTH_TOKEN=ollama
+claude --model qwen3-coder
+```
+
+Use a model with tool calling and at least 32K context; the spec skills are long and the BMM files are
+large. Codex pairs with GPT, Vibe with Mistral (Devstral), OpenCode with any provider including Ollama
+and Mistral. Known gaps that need upstream changes are listed in
+[docs/upstream-portability.md](docs/upstream-portability.md).
+
 ## Layout
 
 ```
 openehr-spec/
-├── .mcp.json, .claude/settings.json      copied from this repo
-├── ai-spec-setup/           this repo: docs/, scripts/, external/ (submodules)
+├── AGENTS.md, CLAUDE.md                  shared instructions (copied from this repo)
+├── .mcp.json, .claude/, .cursor/, ...    MCP config for the host(s) you installed
+├── .agents/skills/                       skills for non-Claude hosts
+├── ai-spec-setup/                        this repo: docs/, scripts/, hosts/, external/ (submodules)
 ├── specifications-AA_GLOBAL/
 ├── specifications-RM/
 └── ... (18 specifications-XX repos)
