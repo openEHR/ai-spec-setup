@@ -1,0 +1,14 @@
+{
+  "extraKnownMarketplaces": {
+    "openehr": {
+      "source": { "source": "github", "repo": "openEHR/ai-plugins" }
+    },
+    "cadasto": {
+      "source": { "source": "github", "repo": "Cadasto/plugin-marketplace" }
+    }
+  },
+  "enabledPlugins": {
+    "openehr-specs@openehr": true,
+    "openehr-assistant@cadasto": true
+  }
+}

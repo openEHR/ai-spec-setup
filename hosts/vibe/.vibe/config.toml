@@ -1,0 +1,13 @@
+# Mistral Vibe MCP servers, generated from .mcp.json by scripts/gen-host-configs.py.
+# Vibe reads ./.vibe/config.toml first, then ~/.vibe/config.toml. Remote servers without auth use OAuth (browser login).
+
+[[mcp_servers]]
+name = "discourse-openehr-org"
+transport = "stdio"
+command = "docker"
+args = ["run", "-i", "--rm", "--init", "--pull=never", "--security-opt", "no-new-privileges", "-v", "${HOME}/.config/discourse-openehr-org.profile.json:/profile.json:ro", "discourse-mcp", "--profile", "/profile.json", "--site", "https://discourse.openehr.org", "--tools_mode", "discourse_api_only"]
+
+[[mcp_servers]]
+name = "atlassian"
+transport = "streamable-http"
+url = "https://mcp.atlassian.com/v2/mcp"
